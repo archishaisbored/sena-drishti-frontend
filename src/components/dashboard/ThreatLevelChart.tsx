@@ -15,52 +15,52 @@ const ThreatLevelChart: React.FC = () => {
   
   // Function to determine point color based on threat level
   const getPointColor = (value: number) => {
-    if (value < 40) return '#00CFC9'; // Low - Cyan
-    if (value < 70) return '#FFC700'; // Medium - Yellow
-    return '#EA384C'; // High - Red
+    if (value < 40) return '#3B82F6'; // Low - Blue
+    if (value < 70) return '#FBBF24'; // Medium - Yellow
+    return '#DC2626'; // High - Red
   };
 
   return (
-    <div className="tsrs-card">
-      <div className="p-4 border-b border-tsrs-border">
-        <h2 className="text-2xl font-semibold tracking-wider text-tsrs-accent">THREAT LEVEL TREND</h2>
+    <div className="bg-white shadow-md rounded-lg border border-slate-200">
+      <div className="p-4 border-b border-slate-200">
+        <h2 className="text-xl font-semibold text-blue-600">THREAT LEVEL TREND</h2>
       </div>
       <div className="p-6 h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
             <XAxis 
               dataKey="time" 
-              stroke="#94A3B8" 
-              tick={{ fill: '#94A3B8', fontFamily: 'JetBrains Mono' }}
+              stroke="#64748B" 
+              tick={{ fill: '#64748B', fontFamily: 'sans-serif' }}
             />
             <YAxis 
-              stroke="#94A3B8" 
-              tick={{ fill: '#94A3B8', fontFamily: 'JetBrains Mono' }}
+              stroke="#64748B" 
+              tick={{ fill: '#64748B', fontFamily: 'sans-serif' }}
               domain={[0, 100]}
               label={{ 
                 value: 'Threat Level', 
                 angle: -90, 
                 position: 'insideLeft', 
-                fill: '#94A3B8',
-                fontFamily: 'JetBrains Mono',
+                fill: '#64748B',
+                fontFamily: 'sans-serif',
                 fontSize: 12
               }}
             />
             <Tooltip 
               contentStyle={{ 
-                backgroundColor: '#131A24', 
-                borderColor: '#1E293B',
-                fontFamily: 'JetBrains Mono'
+                backgroundColor: '#FFFFFF', 
+                borderColor: '#E5E7EB',
+                fontFamily: 'sans-serif'
               }}
-              labelStyle={{ color: '#E2E8F0' }}
-              itemStyle={{ color: '#00CFC9' }}
+              labelStyle={{ color: '#334155' }}
+              itemStyle={{ color: '#3B82F6' }}
               formatter={(value: number) => [`${value}%`, 'Threat Level']}
             />
             <Line 
               type="monotone" 
               dataKey="level" 
-              stroke="#00CFC9" 
+              stroke="#3B82F6" 
               strokeWidth={2}
               dot={(props) => {
                 const { cx, cy, payload } = props;
@@ -68,14 +68,14 @@ const ThreatLevelChart: React.FC = () => {
                   <circle 
                     cx={cx} 
                     cy={cy} 
-                    r={5} 
+                    r={4} 
                     fill={getPointColor(payload.level)}
-                    stroke="#0B0E14" 
+                    stroke="#FFFFFF" 
                     strokeWidth={2} 
                   />
                 );
               }}
-              activeDot={{ r: 8, fill: '#EA384C', stroke: '#0B0E14', strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: '#DC2626', stroke: '#FFFFFF', strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>
