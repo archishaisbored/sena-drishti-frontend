@@ -24,21 +24,21 @@ const TSRSDashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-800 p-4 md:p-6">
+    <div className="min-h-screen bg-tsrs-background text-tsrs-text p-4 md:p-6">
       {/* Header */}
-      <header className="flex flex-wrap items-center justify-between mb-6 border-b border-slate-200 pb-4">
+      <header className="flex flex-wrap items-center justify-between mb-6 border-b border-tsrs-border pb-4">
         <div className="flex items-center mb-4 md:mb-0">
-          <Shield className="h-8 w-8 text-blue-600 mr-3" />
+          <Shield className="h-10 w-10 text-tsrs-accent mr-3" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold flex items-center">
-              <span className="text-blue-600">TSRS</span>
-              <span className="hidden md:inline text-slate-600 text-lg md:text-xl ml-3 font-light">
-                Tactical Surveillance & Response System
+            <h1 className="text-3xl md:text-4xl font-bold tracking-wider flex items-center">
+              <span className="text-white">TSRS</span>
+              <span className="hidden md:inline text-tsrs-text-secondary text-lg md:text-xl ml-3 font-light tracking-widest">
+                TACTICAL SURVEILLANCE & RESPONSE SYSTEM
               </span>
             </h1>
           </div>
         </div>
-        <div className="font-mono text-xl md:text-2xl font-medium text-slate-700">
+        <div className="font-mono text-2xl md:text-3xl font-medium text-tsrs-accent animate-pulse">
           09:27
         </div>
       </header>
@@ -74,7 +74,7 @@ const TSRSDashboard: React.FC = () => {
           {/* Deploy Response Button */}
           <button 
             onClick={handleDeployResponse}
-            className="mt-4 py-4 text-lg bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+            className="tsrs-button-danger mt-4 py-5 text-xl animate-pulse-danger"
           >
             DEPLOY RESPONSE
           </button>
