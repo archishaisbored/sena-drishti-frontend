@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// TSRS custom colors
+				tsrs: {
+					background: '#0B0E14',
+					card: '#131A24',
+					accent: '#00CFC9',
+					'accent-hover': '#00F0EA',
+					warning: '#FFC700',
+					danger: '#EA384C',
+					'danger-hover': '#F4475A',
+					text: '#E2E8F0',
+					'text-secondary': '#94A3B8',
+					border: '#1E293B',
+					glow: '#00CFC950'
 				}
 			},
 			borderRadius: {
@@ -84,11 +99,64 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'pulse-glow': {
+					'0%, 100%': {
+						boxShadow: '0 0 4px 2px rgba(0, 207, 201, 0.4)'
+					},
+					'50%': {
+						boxShadow: '0 0 8px 4px rgba(0, 207, 201, 0.6)'
+					}
+				},
+				'pulse-danger': {
+					'0%, 100%': {
+						boxShadow: '0 0 4px 2px rgba(234, 56, 76, 0.4)'
+					},
+					'50%': {
+						boxShadow: '0 0 8px 4px rgba(234, 56, 76, 0.6)'
+					}
+				},
+				'data-ping': {
+					'0%': {
+						transform: 'scale(1)',
+						opacity: '1'
+					},
+					'75%, 100%': {
+						transform: 'scale(1.2)',
+						opacity: '0'
+					}
+				},
+				'fade-in': {
+					'0%': {
+						opacity: '0'
+					},
+					'100%': {
+						opacity: '1'
+					}
+				},
+				'slide-in': {
+					'0%': {
+						transform: 'translateY(10px)',
+						opacity: '0'
+					},
+					'100%': {
+						transform: 'translateY(0)',
+						opacity: '1'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-glow': 'pulse-glow 2s infinite ease-in-out',
+				'pulse-danger': 'pulse-danger 1.5s infinite ease-in-out',
+				'data-ping': 'data-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite',
+				'fade-in': 'fade-in 0.3s ease-in-out',
+				'slide-in': 'slide-in 0.4s ease-out'
+			},
+			fontFamily: {
+				'cyber': ['Rajdhani', 'Orbitron', 'sans-serif'],
+				'mono': ['JetBrains Mono', 'monospace']
 			}
 		}
 	},
