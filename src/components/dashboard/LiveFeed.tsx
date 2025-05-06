@@ -14,8 +14,8 @@ const LiveFeed: React.FC<LiveFeedProps> = ({ threatDetected }) => {
       <div className={`relative flex justify-center items-center p-4 h-[400px] ${threatDetected ? 'animate-pulse-danger' : ''}`}>
         <div className={`relative w-full h-full overflow-hidden ${threatDetected ? 'border-4 border-tsrs-danger' : ''}`}>
           <img
-            src="/lovable-uploads/2b0d81c3-7b95-4c38-bad9-154f8a012e88.png"
-            alt="Surveillance feed showing a person with a weapon in a crowd"
+            src="https://source.unsplash.com/random/?gunfight,action,scene"
+            alt="Surveillance feed showing a gun fight scene"
             className="object-cover w-full h-full"
           />
           
