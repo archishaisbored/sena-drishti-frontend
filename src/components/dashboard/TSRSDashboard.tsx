@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { Shield } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, Clock } from 'lucide-react';
 import LiveFeed from './LiveFeed';
 import ActionButton from './ActionButton';
 import ThreatLevelChart from './ThreatLevelChart';
@@ -12,8 +12,30 @@ import { toast } from 'sonner';
 const TSRSDashboard: React.FC = () => {
   const [activeOverlay, setActiveOverlay] = useState<string | null>(null);
   const [threatDetected, setThreatDetected] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const closeOverlay = () => setActiveOverlay(null);
+  
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format time to Indian Standard Time
+  const formatIndianTime = () => {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Kolkata'
+    };
+    return new Intl.DateTimeFormat('en-IN', options).format(currentTime);
+  };
   
   const handleDeployResponse = () => {
     toast.success("Response team deployed", {
@@ -37,8 +59,9 @@ const TSRSDashboard: React.FC = () => {
             </h1>
           </div>
         </div>
-        <div className="font-mono text-2xl md:text-3xl font-medium text-tsrs-accent">
-          09:27
+        <div className="font-mono text-2xl md:text-3xl font-medium text-tsrs-accent flex items-center">
+          <Clock className="h-6 w-6 mr-2" />
+          {formatIndianTime()}
         </div>
       </header>
 

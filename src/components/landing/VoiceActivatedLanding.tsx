@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Flag, Mic, MicOff, MessageCircle } from 'lucide-react';
+import { Flag, Mic, MicOff, MessageCircle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +12,7 @@ const VoiceActivatedLanding: React.FC<VoiceActivatedLandingProps> = ({ onActivat
   const [isListening, setIsListening] = useState(false);
   const [isActivated, setIsActivated] = useState(false);
   const [message, setMessage] = useState('');
+  const [currentTime, setCurrentTime] = useState(new Date());
   const micRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
@@ -21,6 +22,27 @@ const VoiceActivatedLanding: React.FC<VoiceActivatedLandingProps> = ({ onActivat
     "Tell me something inspirational.",
     "How many commands are there in the Indian Army?"
   ];
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format time to Indian Standard Time
+  const formatIndianTime = () => {
+    const options: Intl.DateTimeFormatOptions = {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Kolkata'
+    };
+    return new Intl.DateTimeFormat('en-IN', options).format(currentTime);
+  };
 
   // Simulate voice recognition
   const toggleVoiceRecognition = () => {
@@ -70,9 +92,15 @@ const VoiceActivatedLanding: React.FC<VoiceActivatedLandingProps> = ({ onActivat
           </h1>
           <div className="h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 rounded-full mt-1 animate-pulse"></div>
         </div>
-        <div className="relative">
-          <div className="w-16 h-12 animate-wave">
-            <Flag className="h-12 w-12 text-[#FF9933]" strokeWidth={1.5} />
+        <div className="flex items-center gap-4">
+          <div className="font-mono text-xl md:text-2xl font-medium text-blue-400 flex items-center">
+            <Clock className="h-5 w-5 mr-2" />
+            {formatIndianTime()}
+          </div>
+          <div className="relative">
+            <div className="w-16 h-12 animate-wave">
+              <Flag className="h-12 w-12 text-[#FF9933]" strokeWidth={1.5} />
+            </div>
           </div>
         </div>
       </div>
