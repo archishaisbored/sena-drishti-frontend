@@ -1,16 +1,16 @@
 
-import React from 'react';
-import { X, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, MapPin, Navigation } from 'lucide-react';
 
 interface OverlayProps {
   onClose: () => void;
 }
 
 const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
-  const coordinates = {
-    latitude: "37.7749° N",
-    longitude: "122.4194° W",
-    address: "Financial District, Downtown Metro Area",
+  const [coordinates, setCoordinates] = useState({
+    latitude: "Calculating...",
+    longitude: "Calculating...",
+    address: "Determining location...",
     sector: "Sector-7",
     camera: "CAM-12",
     elevation: "15.2m (Street Level)",
@@ -19,7 +19,69 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
       { name: "Metro Station", distance: "85m NW" },
       { name: "Commercial Center", distance: "230m E" }
     ]
-  };
+  });
+
+  useEffect(() => {
+    // Simulate fetching the user's location
+    const fetchLocation = async () => {
+      try {
+        // Check if geolocation is available
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            // Success callback
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              
+              setCoordinates(prev => ({
+                ...prev,
+                latitude: `${latitude.toFixed(4)}° ${latitude >= 0 ? 'N' : 'S'}`,
+                longitude: `${longitude.toFixed(4)}° ${longitude >= 0 ? 'E' : 'W'}`,
+                address: "Your Current Location",
+              }));
+              
+              console.log("Location obtained:", latitude, longitude);
+            },
+            // Error callback
+            (error) => {
+              console.error("Error getting location:", error);
+              // If user denies permission or any other error, use a default location (Delhi, India)
+              setCoordinates(prev => ({
+                ...prev,
+                latitude: "28.6139° N",
+                longitude: "77.2090° E",
+                address: "New Delhi, India (Default)",
+              }));
+            },
+            // Options
+            { 
+              enableHighAccuracy: true,
+              timeout: 5000,
+              maximumAge: 0
+            }
+          );
+        } else {
+          // Fallback for browsers without geolocation
+          setCoordinates(prev => ({
+            ...prev,
+            latitude: "28.6139° N",
+            longitude: "77.2090° E",
+            address: "New Delhi, India (Default)",
+          }));
+        }
+      } catch (error) {
+        console.error("Location fetch error:", error);
+        // Fallback if any unexpected error occurs
+        setCoordinates(prev => ({
+          ...prev,
+          latitude: "28.6139° N",
+          longitude: "77.2090° E",
+          address: "New Delhi, India (Default)",
+        }));
+      }
+    };
+
+    fetchLocation();
+  }, []);
 
   return (
     <div className="overlay">
@@ -39,8 +101,12 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-slide-in">
         {/* Map View */}
         <div className="tsrs-card-glow h-[500px] flex flex-col">
-          <div className="p-4 border-b border-tsrs-border">
+          <div className="p-4 border-b border-tsrs-border flex justify-between items-center">
             <h3 className="text-xl font-semibold">LOCATION MAP</h3>
+            <div className="flex items-center text-sm text-tsrs-accent">
+              <Navigation size={16} className="mr-1" />
+              <span>LIVE TRACKING</span>
+            </div>
           </div>
           <div className="flex-1 bg-tsrs-card p-4 relative">
             {/* This would be a real map in a production app */}
