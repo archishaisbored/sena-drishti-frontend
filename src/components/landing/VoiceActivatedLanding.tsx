@@ -98,8 +98,23 @@ const VoiceActivatedLanding: React.FC<VoiceActivatedLandingProps> = ({ onActivat
             {formatIndianTime()}
           </div>
           <div className="relative">
-            <div className="w-16 h-12 animate-wave">
-              <Flag className="h-12 w-12 text-[#FF9933]" strokeWidth={1.5} />
+            <div className="w-16 h-12 flex flex-col items-center">
+              {/* Indian Flag - Three horizontal stripes */}
+              <div className="w-full h-4 bg-[#FF9933] rounded-t-sm"></div> {/* Saffron */}
+              <div className="w-full h-4 bg-white relative flex justify-center items-center"> {/* White */}
+                <div className="absolute w-4 h-4">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-[#000080]">
+                    <circle cx="12" cy="12" r="8" stroke="#000080" strokeWidth="2" fill="none" />
+                    <path d="M12 4 L12 20 M4 12 L20 12" stroke="#000080" strokeWidth="1" />
+                    <path d="M12 12 L18 12" stroke="#000080" strokeWidth="1" />
+                    <path d="M12 12 L12 6" stroke="#000080" strokeWidth="1" />
+                  </svg>
+                </div>
+              </div>
+              <div className="w-full h-4 bg-[#138808] rounded-b-sm"></div> {/* Green */}
+            </div>
+            <div className="absolute inset-0 animate-wave pointer-events-none">
+              {/* This creates the waving effect */}
             </div>
           </div>
         </div>
