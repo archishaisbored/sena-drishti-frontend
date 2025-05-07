@@ -45,13 +45,13 @@
   }
 
   body {
-    @apply bg-tsrs-background text-tsrs-text font-cyber;
+    @apply bg-tsrs-background text-tsrs-text font-sans;
   }
 }
 
 @layer components {
   .tsrs-card {
-    @apply relative bg-tsrs-card border border-tsrs-border rounded-2xl overflow-hidden 
+    @apply relative bg-tsrs-card border border-tsrs-border rounded-lg overflow-hidden 
            shadow-md backdrop-blur-sm transition-all duration-300;
   }
 
@@ -60,8 +60,8 @@
   }
 
   .tsrs-button {
-    @apply bg-transparent text-tsrs-accent font-cyber border-2 border-tsrs-accent rounded-md 
-           px-6 py-3 text-lg uppercase tracking-wider font-semibold transition-all 
+    @apply bg-transparent text-tsrs-accent font-sans border-2 border-tsrs-accent rounded-md 
+           px-6 py-3 text-lg uppercase font-semibold transition-all 
            duration-300 hover:bg-tsrs-accent/10 hover:shadow-[0_0_10px_rgba(0,207,201,0.5)] 
            focus:outline-none focus:ring-2 focus:ring-tsrs-accent/50 focus:ring-offset-2 
            focus:ring-offset-tsrs-background;
@@ -69,7 +69,7 @@
   
   .tsrs-button-danger {
     @apply bg-transparent text-tsrs-danger border-2 border-tsrs-danger rounded-md
-           px-6 py-3 text-lg uppercase tracking-wider font-semibold transition-all
+           px-6 py-3 text-lg uppercase font-semibold transition-all
            duration-300 hover:bg-tsrs-danger/10 hover:shadow-[0_0_10px_rgba(234,56,76,0.5)]
            focus:outline-none focus:ring-2 focus:ring-tsrs-danger/50 focus:ring-offset-2
            focus:ring-offset-tsrs-background;
@@ -84,4 +84,18 @@
     @apply fixed inset-0 z-50 bg-tsrs-background/90 backdrop-blur-sm flex flex-col 
            p-8 animate-fade-in overflow-y-auto;
   }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+.animate-wave {
+  animation: wave 3s ease-in-out infinite;
+  transform-origin: center bottom;
 }

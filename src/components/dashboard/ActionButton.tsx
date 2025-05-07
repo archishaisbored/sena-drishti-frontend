@@ -10,7 +10,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ label, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className="tsrs-button w-full h-[80px] flex justify-center items-center animate-pulse-glow"
+      className="tsrs-button w-full h-[80px] flex justify-center items-center"
     >
       {label}
     </button>

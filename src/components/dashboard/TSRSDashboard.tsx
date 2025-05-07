@@ -7,7 +7,6 @@ import ThreatLevelChart from './ThreatLevelChart';
 import CoordinatesOverlay from './overlays/CoordinatesOverlay';
 import StrategyOverlay from './overlays/StrategyOverlay';
 import WeaponOverlay from './overlays/WeaponOverlay';
-import CrowdOverlay from './overlays/CrowdOverlay';
 import { toast } from 'sonner';
 
 const TSRSDashboard: React.FC = () => {
@@ -30,15 +29,15 @@ const TSRSDashboard: React.FC = () => {
         <div className="flex items-center mb-4 md:mb-0">
           <Shield className="h-10 w-10 text-tsrs-accent mr-3" />
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold tracking-wider flex items-center">
+            <h1 className="text-3xl md:text-4xl font-bold flex items-center">
               <span className="text-white">TSRS</span>
-              <span className="hidden md:inline text-tsrs-text-secondary text-lg md:text-xl ml-3 font-light tracking-widest">
+              <span className="hidden md:inline text-tsrs-text-secondary text-lg md:text-xl ml-3 font-light">
                 TACTICAL SURVEILLANCE & RESPONSE SYSTEM
               </span>
             </h1>
           </div>
         </div>
-        <div className="font-mono text-2xl md:text-3xl font-medium text-tsrs-accent animate-pulse">
+        <div className="font-mono text-2xl md:text-3xl font-medium text-tsrs-accent">
           09:27
         </div>
       </header>
@@ -58,23 +57,23 @@ const TSRSDashboard: React.FC = () => {
               onClick={() => setActiveOverlay('coordinates')} 
             />
             <ActionButton 
-              label="GenAI Strategy Captions" 
+              label="Strategy Captions" 
               onClick={() => setActiveOverlay('strategy')} 
             />
             <ActionButton 
-              label="Weapon Type" 
+              label="Weapon Analysis" 
               onClick={() => setActiveOverlay('weapon')} 
             />
             <ActionButton 
-              label="Crowd Density" 
-              onClick={() => setActiveOverlay('crowd')} 
+              label="Return to Chat" 
+              onClick={() => window.location.reload()} 
             />
           </div>
           
           {/* Deploy Response Button */}
           <button 
             onClick={handleDeployResponse}
-            className="tsrs-button-danger mt-4 py-5 text-xl animate-pulse-danger"
+            className="tsrs-button-danger mt-4 py-5 text-xl"
           >
             DEPLOY RESPONSE
           </button>
@@ -97,10 +96,6 @@ const TSRSDashboard: React.FC = () => {
       
       {activeOverlay === 'weapon' && (
         <WeaponOverlay onClose={closeOverlay} />
-      )}
-      
-      {activeOverlay === 'crowd' && (
-        <CrowdOverlay onClose={closeOverlay} />
       )}
     </div>
   );
