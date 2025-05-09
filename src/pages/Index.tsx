@@ -9,31 +9,52 @@ const Index = () => {
   const [showChatInterface, setShowChatInterface] = useState(false);
   
   useEffect(() => {
-    // WebSocket connection for receiving trigger events
+    // WebSocket connection for receiving trigger events and all data
     const socket = new WebSocket('wss://echo.websocket.org'); // Replace with your actual WebSocket endpoint
     
     socket.onopen = () => {
-      console.log('WebSocket connection established');
+      console.log('Main WebSocket connection established');
     };
     
     socket.onmessage = (event) => {
-      // Check if the message is the trigger to activate TSRS
-      if (event.data === 'ACTIVATE_TSRS') {
-        setIsTSRSActive(true);
-      }
-      
-      // Optional: Allow deactivation via WebSocket as well
-      if (event.data === 'DEACTIVATE_TSRS') {
-        setIsTSRSActive(false);
+      try {
+        const data = JSON.parse(event.data);
+        
+        // Handle UI state transitions
+        if (data.action === 'ACTIVATE_TSRS') {
+          setIsTSRSActive(true);
+        } else if (data.action === 'DEACTIVATE_TSRS') {
+          setIsTSRSActive(false);
+        } else if (data.action === 'ACTIVATE_CHAT') {
+          setShowChatInterface(true);
+        }
+        
+        // You can handle more data types here
+        console.log('Received data:', data);
+      } catch (error) {
+        console.error('Error parsing WebSocket data:', error);
+        
+        // Handle string-based commands (for backward compatibility)
+        if (event.data === 'ACTIVATE_TSRS') {
+          setIsTSRSActive(true);
+        } else if (event.data === 'DEACTIVATE_TSRS') {
+          setIsTSRSActive(false);
+        }
       }
     };
     
     socket.onerror = (error) => {
-      console.error('WebSocket error:', error);
+      console.error('Main WebSocket error:', error);
     };
     
     socket.onclose = () => {
-      console.log('WebSocket connection closed');
+      console.log('Main WebSocket connection closed');
+      
+      // Attempt to reconnect after a delay
+      setTimeout(() => {
+        console.log('Attempting to reconnect WebSocket...');
+        // In a production app, you would implement proper reconnection logic here
+      }, 3000);
     };
     
     // Clean up connection

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Flag, Mic, MicOff, MessageCircle, Clock } from 'lucide-react';
 import { toast } from 'sonner';
@@ -88,7 +87,7 @@ const VoiceActivatedLanding: React.FC<VoiceActivatedLandingProps> = ({ onActivat
       <div className="w-full flex justify-between items-center">
         <div className="relative">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Say <span className="text-blue-400">Jai Hind</span> to Activate
+            <span className="text-blue-400">Jai Hind</span>
           </h1>
           <div className="h-1 bg-gradient-to-r from-blue-500 via-blue-400 to-blue-600 rounded-full mt-1 animate-pulse"></div>
         </div>

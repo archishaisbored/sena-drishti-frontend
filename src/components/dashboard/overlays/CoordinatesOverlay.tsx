@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { X, MapPin, Navigation } from 'lucide-react';
 
 interface OverlayProps {
@@ -14,14 +14,37 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
     sector: "Sector-7",
     camera: "CAM-12",
     elevation: "15.2m (Street Level)",
-    landmarks: [
-      { name: "City Hall Plaza", distance: "120m SE" },
-      { name: "Metro Station", distance: "85m NW" },
-      { name: "Commercial Center", distance: "230m E" }
-    ]
   });
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [mapUrl, setMapUrl] = useState("");
 
   useEffect(() => {
+    // WebSocket connection for coordinates data
+    const socket = new WebSocket('wss://echo.websocket.org'); // Replace with your actual WebSocket endpoint
+    
+    socket.onopen = () => {
+      console.log('WebSocket connection established for coordinates');
+    };
+    
+    socket.onmessage = (event) => {
+      try {
+        // Parse incoming data
+        const locationData = JSON.parse(event.data);
+        if (locationData.coordinates) {
+          setCoordinates(prevState => ({
+            ...prevState,
+            ...locationData.coordinates
+          }));
+        }
+      } catch (error) {
+        console.error('Error parsing coordinates data:', error);
+      }
+    };
+    
+    socket.onerror = (error) => {
+      console.error('WebSocket error in coordinates:', error);
+    };
+    
     // Simulate fetching the user's location
     const fetchLocation = async () => {
       try {
@@ -38,6 +61,10 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
                 longitude: `${longitude.toFixed(4)}° ${longitude >= 0 ? 'E' : 'W'}`,
                 address: "Your Current Location",
               }));
+
+              // Create a map URL for the current location using OpenStreetMap
+              const mapImageUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.01}%2C${latitude - 0.01}%2C${longitude + 0.01}%2C${latitude + 0.01}&layer=mapnik&marker=${latitude}%2C${longitude}`;
+              setMapUrl(mapImageUrl);
               
               console.log("Location obtained:", latitude, longitude);
             },
@@ -51,6 +78,12 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
                 longitude: "77.2090° E",
                 address: "New Delhi, India (Default)",
               }));
+              
+              // Create a map URL for the default location
+              const defaultLat = 28.6139;
+              const defaultLng = 77.2090;
+              const mapImageUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${defaultLng - 0.01}%2C${defaultLat - 0.01}%2C${defaultLng + 0.01}%2C${defaultLat + 0.01}&layer=mapnik&marker=${defaultLat}%2C${defaultLng}`;
+              setMapUrl(mapImageUrl);
             },
             // Options
             { 
@@ -67,6 +100,12 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
             longitude: "77.2090° E",
             address: "New Delhi, India (Default)",
           }));
+          
+          // Create a map URL for the default location
+          const defaultLat = 28.6139;
+          const defaultLng = 77.2090;
+          const mapImageUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${defaultLng - 0.01}%2C${defaultLat - 0.01}%2C${defaultLng + 0.01}%2C${defaultLat + 0.01}&layer=mapnik&marker=${defaultLat}%2C${defaultLng}`;
+          setMapUrl(mapImageUrl);
         }
       } catch (error) {
         console.error("Location fetch error:", error);
@@ -77,10 +116,20 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
           longitude: "77.2090° E",
           address: "New Delhi, India (Default)",
         }));
+        
+        // Create a map URL for the default location
+        const defaultLat = 28.6139;
+        const defaultLng = 77.2090;
+        const mapImageUrl = `https://www.openstreetmap.org/export/embed.html?bbox=${defaultLng - 0.01}%2C${defaultLat - 0.01}%2C${defaultLng + 0.01}%2C${defaultLat + 0.01}&layer=mapnik&marker=${defaultLat}%2C${defaultLng}`;
+        setMapUrl(mapImageUrl);
       }
     };
 
     fetchLocation();
+    
+    return () => {
+      socket.close();
+    };
   }, []);
 
   return (
@@ -108,31 +157,24 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
               <span>LIVE TRACKING</span>
             </div>
           </div>
-          <div className="flex-1 bg-tsrs-card p-4 relative">
-            {/* This would be a real map in a production app */}
-            <div className="absolute inset-0 bg-[#1A2432] overflow-hidden">
-              <div className="absolute inset-0 grid grid-cols-12 grid-rows-12 gap-[1px] opacity-30">
-                {Array(12).fill(0).map((_, rowIndex) => 
-                  Array(12).fill(0).map((_, colIndex) => (
-                    <div 
-                      key={`${rowIndex}-${colIndex}`}
-                      className="border border-tsrs-accent/20"
-                    />
-                  ))
-                )}
+          <div className="flex-1 bg-tsrs-card p-0 relative overflow-hidden">
+            {mapUrl ? (
+              <iframe 
+                src={mapUrl} 
+                width="100%" 
+                height="100%" 
+                frameBorder="0" 
+                scrolling="no" 
+                title="Location Map"
+                className="absolute inset-0"
+              ></iframe>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center bg-tsrs-card">
+                <p className="text-tsrs-text-secondary">Loading map...</p>
               </div>
-              
-              {/* Map Marker */}
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <div className="relative">
-                  <div className="h-6 w-6 rounded-full bg-tsrs-danger animate-pulse-danger"></div>
-                  <div className="absolute -top-1 -left-1 h-8 w-8 rounded-full border-2 border-tsrs-danger animate-data-ping opacity-60"></div>
-                </div>
-              </div>
-              
-              <div className="absolute bottom-4 right-4 text-xs font-mono text-tsrs-text-secondary">
-                GRID REF: S7-445.872
-              </div>
+            )}
+            <div className="absolute bottom-4 right-4 text-xs font-mono bg-tsrs-background/70 px-2 py-1 rounded">
+              GRID REF: S7-445.872
             </div>
           </div>
         </div>
@@ -171,18 +213,6 @@ const CoordinatesOverlay: React.FC<OverlayProps> = ({ onClose }) => {
               <div className="tsrs-card p-4">
                 <div className="text-sm text-tsrs-text-secondary mb-1">ELEVATION</div>
                 <div>{coordinates.elevation}</div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="text-sm text-tsrs-text-secondary mb-2">NEARBY LANDMARKS</div>
-              <div className="space-y-2">
-                {coordinates.landmarks.map((landmark, index) => (
-                  <div key={index} className="tsrs-card p-3 flex justify-between">
-                    <span>{landmark.name}</span>
-                    <span className="text-tsrs-accent">{landmark.distance}</span>
-                  </div>
-                ))}
               </div>
             </div>
           </div>

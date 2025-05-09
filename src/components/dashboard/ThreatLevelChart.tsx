@@ -1,24 +1,92 @@
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from 'recharts';
 
+interface ThreatData {
+  time: string;
+  level: string;
+  numericLevel: number; // For chart display
+}
+
 const ThreatLevelChart: React.FC = () => {
-  const data = [
-    { time: '09:00', level: 20 },
-    { time: '09:05', level: 35 },
-    { time: '09:10', level: 30 },
-    { time: '09:15', level: 45 },
-    { time: '09:20', level: 50 },
-    { time: '09:25', level: 70 },
-    { time: '09:27', level: 85 },
+  // Initial data
+  const initialData: ThreatData[] = [
+    { time: '09:00', level: 'Low', numericLevel: 20 },
+    { time: '09:05', level: 'Low', numericLevel: 35 },
+    { time: '09:10', level: 'Low', numericLevel: 30 },
+    { time: '09:15', level: 'Medium', numericLevel: 45 },
+    { time: '09:20', level: 'Medium', numericLevel: 50 },
+    { time: '09:25', level: 'Medium', numericLevel: 70 },
+    { time: '09:27', level: 'High', numericLevel: 85 },
   ];
   
-  // Function to determine point color based on threat level
-  const getPointColor = (value: number) => {
-    if (value < 40) return '#00CFC9'; // Low - Cyan
-    if (value < 70) return '#FFC700'; // Medium - Yellow
-    return '#EA384C'; // High - Red
+  const [data, setData] = useState<ThreatData[]>(initialData);
+  
+  // Function to determine point color based on threat level string
+  const getPointColor = (level: string) => {
+    switch(level.toLowerCase()) {
+      case 'low': return '#00CFC9'; // Cyan
+      case 'medium': return '#FFC700'; // Yellow
+      default: return '#EA384C'; // High - Red
+    }
   };
+  
+  // WebSocket connection for real-time threat data
+  useEffect(() => {
+    const socket = new WebSocket('wss://echo.websocket.org'); // Replace with your actual WebSocket endpoint
+    
+    socket.onopen = () => {
+      console.log('WebSocket connection established for threat data');
+    };
+    
+    socket.onmessage = (event) => {
+      try {
+        // Parse incoming data - assuming format: { time: '09:30', level: 'High' }
+        const incomingData = JSON.parse(event.data);
+        
+        if (incomingData.time && incomingData.level) {
+          // Convert string level to numeric level for chart display
+          let numericLevel = 0;
+          switch(incomingData.level.toLowerCase()) {
+            case 'low': 
+              numericLevel = Math.floor(Math.random() * 30) + 10; // 10-40 range
+              break;
+            case 'medium': 
+              numericLevel = Math.floor(Math.random() * 30) + 40; // 40-70 range
+              break;
+            case 'high': 
+              numericLevel = Math.floor(Math.random() * 30) + 70; // 70-100 range
+              break;
+          }
+          
+          // Add new data point
+          setData(prevData => {
+            const newData = [...prevData, {
+              time: incomingData.time,
+              level: incomingData.level,
+              numericLevel: numericLevel
+            }];
+            
+            // Keep only the most recent 10 points for better visualization
+            if (newData.length > 10) {
+              return newData.slice(newData.length - 10);
+            }
+            return newData;
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing threat data:', error);
+      }
+    };
+    
+    socket.onerror = (error) => {
+      console.error('WebSocket error in threat chart:', error);
+    };
+    
+    // Clean up connection
+    return () => {
+      socket.close();
+    };
+  }, []);
 
   return (
     <div className="tsrs-card">
@@ -55,11 +123,14 @@ const ThreatLevelChart: React.FC = () => {
               }}
               labelStyle={{ color: '#E2E8F0' }}
               itemStyle={{ color: '#00CFC9' }}
-              formatter={(value: number) => [`${value}%`, 'Threat Level']}
+              formatter={(value: number, name: string, props: any) => {
+                // Show the string threat level in tooltip
+                return [props.payload.level, 'Threat Level'];
+              }}
             />
             <Line 
               type="monotone" 
-              dataKey="level" 
+              dataKey="numericLevel" 
               stroke="#00CFC9" 
               strokeWidth={2}
               dot={(props) => {
