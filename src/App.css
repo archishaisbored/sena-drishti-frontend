@@ -1,8 +1,24 @@
 #root {
-  max-width: 1280px;
+  width: 1280px; /* Fixed width instead of max-width */
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  overflow-x: auto; /* Allow horizontal scrolling if content overflows */
+}
+
+/* Remove or comment out media queries for non-responsive design */
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disable prefers-reduced-motion media query */
+a:nth-of-type(2) .logo {
+  animation: logo-spin infinite 20s linear; /* Always apply animation */
 }
 
 .logo {
@@ -16,21 +32,6 @@
 }
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
 }
 
 .card {

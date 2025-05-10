@@ -16,7 +16,7 @@ interface Weapon {
 interface OverlayProps {
   onClose: () => void;
   weapons?: Weapon[];
-  image?: string; // Add image prop
+  image?: string; // Base64 image string
 }
 
 const WeaponOverlay: React.FC<OverlayProps> = ({ onClose, weapons, image }) => {
@@ -40,9 +40,9 @@ const WeaponOverlay: React.FC<OverlayProps> = ({ onClose, weapons, image }) => {
   };
 
   return (
-    <div className="overlay">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-tsrs-accent flex items-center">
+    <div className="overlay flex flex-col h-full p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold text-tsrs-accent flex items-center">
           <CircleArrowRight className="mr-2" />
           WEAPON TYPE ANALYSIS
         </h2>
@@ -50,47 +50,20 @@ const WeaponOverlay: React.FC<OverlayProps> = ({ onClose, weapons, image }) => {
           onClick={onClose}
           className="text-tsrs-text-secondary hover:text-tsrs-accent p-2 rounded-full transition-colors"
         >
-          <X size={32} />
+          <X size={24} />
         </button>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 animate-slide-in">
-        <div className="lg:col-span-1">
-          <div className="tsrs-card-glow space-y-4">
+      <div className="flex flex-col md:flex-row gap-4 flex-grow">
+
+
+        {/* Details Section */}
+        <div className="md:w-1/2">
+          <div className="tsrs-card-glow h-full">
             <div className="p-4 border-b border-tsrs-border">
-              <h3 className="text-xl font-semibold">WEAPON IDENTIFICATION</h3>
+              <h3 className="text-lg font-semibold"></h3>
             </div>
-
-            <div className="px-4">
-              <div className="relative">
-                <img
-                  src={image || "/lovable-uploads/2b0d81c3-7b95-4c38-bad9-154f8a012e88.png"}
-                  alt="Surveillance feed showing a person with a weapon in a crowd"
-                  className="w-full object-cover"
-                  onError={(e) => {
-                    console.error("Failed to load image");
-                    e.currentTarget.src = "https://via.placeholder.com/300x200?text=Image+Not+Found";
-                  }}
-                />
-                {weaponData.bbox && weaponData.bbox.length >= 4 && (
-                  <div
-                    className="absolute border-2 border-tsrs-danger"
-                    style={{
-                      left: `${weaponData.bbox[0]}px`,
-                      top: `${weaponData.bbox[1]}px`,
-                      width: `${weaponData.bbox[2] - weaponData.bbox[0]}px`,
-                      height: `${weaponData.bbox[3] - weaponData.bbox[1]}px`,
-                    }}
-                  >
-                    <div className="absolute -top-7 right-0 bg-tsrs-danger text-white text-xs px-2 py-1">
-                      WEAPON DETECTED
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="p-4 space-y-2">
+            <div className="p-4 space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-tsrs-text-secondary">Type:</span>
                 <span className="font-semibold">{weaponData.type}</span>
@@ -110,7 +83,7 @@ const WeaponOverlay: React.FC<OverlayProps> = ({ onClose, weapons, image }) => {
               <div className="flex justify-between items-center">
                 <span className="text-tsrs-text-secondary">Confidence:</span>
                 <div className="flex items-center">
-                  <div className="bg-gray-700 w-32 h-2 rounded-full overflow-hidden mr-2">
+                  <div className="bg-gray-700 w-24 h-2 rounded-full overflow-hidden mr-2">
                     <div
                       className="bg-tsrs-accent h-full rounded-full"
                       style={{ width: `${Math.min(weaponData.confidence * 100, 100)}%` }}
@@ -119,6 +92,24 @@ const WeaponOverlay: React.FC<OverlayProps> = ({ onClose, weapons, image }) => {
                   <span>{`${Math.round(weaponData.confidence * 100)}%`}</span>
                 </div>
               </div>
+              <div className="flex justify-between items-center">
+                <span className="text-tsrs-text-secondary">Range:</span>
+                <span className="font-semibold">{weaponData.range}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-tsrs-text-secondary">Engagement Distance:</span>
+                <span className="font-semibold">{weaponData.engagement_distance}</span>
+              </div>
+              {weaponData.countermeasures && (
+                <div className="mt-4">
+                  <span className="text-tsrs-text-secondary">Countermeasures:</span>
+                  <ul className="list-disc list-inside text-sm">
+                    {weaponData.countermeasures.map((measure, index) => (
+                      <li key={index}>{measure}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>
