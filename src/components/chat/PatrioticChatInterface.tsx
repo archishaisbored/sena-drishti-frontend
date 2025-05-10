@@ -1,7 +1,7 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Flag, Send, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
+import { useWebSocketContext } from '../context/WebSocketContext';
 
 interface ChatMessage {
   sender: 'user' | 'ai';
@@ -10,10 +10,11 @@ interface ChatMessage {
 }
 
 interface PatrioticChatInterfaceProps {
-  onActivateTSRS?: () => void; // Optional prop for testing
+  onActivateTSRS?: () => void;
 }
 
 const PatrioticChatInterface: React.FC<PatrioticChatInterfaceProps> = ({ onActivateTSRS }) => {
+  const { webSocketData } = useWebSocketContext();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       sender: 'ai',
@@ -24,13 +25,25 @@ const PatrioticChatInterface: React.FC<PatrioticChatInterfaceProps> = ({ onActiv
   const [inputMessage, setInputMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   const sampleQuestions = [
     "What is the role of the Indian Army?",
     "How many commands does the Indian Army have?",
     "Who is the current Chief of Army Staff?",
-    "Tell me something inspirational."
+    "Tell me something inspirational.",
   ];
+
+  // Handle WebSocket verbal reports
+  useEffect(() => {
+    if (webSocketData?.mode === 'conversation' && webSocketData.verbal_report) {
+      const aiMessage: ChatMessage = {
+        sender: 'ai',
+        content: webSocketData.verbal_report,
+        timestamp: new Date(),
+      };
+      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+    }
+  }, [webSocketData]);
 
   useEffect(() => {
     scrollToBottom();
@@ -45,34 +58,36 @@ const PatrioticChatInterface: React.FC<PatrioticChatInterfaceProps> = ({ onActiv
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!inputMessage.trim()) return;
-    
+
     // Add user message
     const userMessage: ChatMessage = {
       sender: 'user',
       content: inputMessage,
       timestamp: new Date(),
     };
-    
+
     setMessages((prevMessages) => [...prevMessages, userMessage]);
     setInputMessage('');
-    
-    // Simulate AI response after a short delay
+
+    // Simulate AI response after a short delay (for testing)
     setTimeout(() => {
       let responseContent = '';
-      
-      // Simple response logic based on keywords - this would be replaced by actual AI
+
       const lowerCaseMessage = inputMessage.toLowerCase();
-      
+
       if (lowerCaseMessage.includes('role') && lowerCaseMessage.includes('army')) {
-        responseContent = "The Indian Army's primary role is to protect the nation from external aggression and threats, maintain peace within its borders, and provide aid during natural calamities. It also contributes to UN peacekeeping missions worldwide.";
+        responseContent =
+          "The Indian Army's primary role is to protect the nation from external aggression and threats, maintain peace within its borders, and provide aid during natural calamities. It also contributes to UN peacekeeping missions worldwide.";
       } else if (lowerCaseMessage.includes('commands') && lowerCaseMessage.includes('army')) {
-        responseContent = "The Indian Army has seven operational commands: Northern, Eastern, Southern, Western, Central, South Western, and Army Training Command (ARTRAC).";
+        responseContent =
+          "The Indian Army has seven operational commands: Northern, Eastern, Southern, Western, Central, South Western, and Army Training Command (ARTRAC).";
       } else if (lowerCaseMessage.includes('chief') || lowerCaseMessage.includes('coas')) {
         responseContent = "General Manoj Pande is the current Chief of Army Staff of the Indian Army.";
       } else if (lowerCaseMessage.includes('inspirational')) {
-        responseContent = "\"Courage is not the absence of fear, but the triumph over it. The brave man is not he who does not feel afraid, but he who conquers that fear.\" - Sardar Vallabhbhai Patel";
+        responseContent =
+          '"Courage is not the absence of fear, but the triumph over it. The brave man is not he who does not feel afraid, but he who conquers that fear." - Sardar Vallabhbhai Patel';
       } else if (lowerCaseMessage.includes('activate') || lowerCaseMessage.includes('tsrs') || lowerCaseMessage.includes('surveillance')) {
         responseContent = "Initiating TSRS activation sequence...";
         setTimeout(() => {
@@ -81,15 +96,16 @@ const PatrioticChatInterface: React.FC<PatrioticChatInterfaceProps> = ({ onActiv
           }
         }, 1500);
       } else {
-        responseContent = "I'm here to assist with information about the Indian Armed Forces and national security. How else may I help you today?";
+        responseContent =
+          "I'm here to assist with information about the Indian Armed Forces and national security. How else may I help you today?";
       }
-      
+
       const aiMessage: ChatMessage = {
         sender: 'ai',
         content: responseContent,
         timestamp: new Date(),
       };
-      
+
       setMessages((prevMessages) => [...prevMessages, aiMessage]);
     }, 800);
   };
@@ -108,10 +124,10 @@ const PatrioticChatInterface: React.FC<PatrioticChatInterfaceProps> = ({ onActiv
   );
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit', 
-      hour12: true 
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
     });
   };
 
@@ -131,28 +147,25 @@ const PatrioticChatInterface: React.FC<PatrioticChatInterfaceProps> = ({ onActiv
             <span className="text-[#00CFC9]">!</span>
           </h1>
         </div>
-        <div className="flex items-center">
-          {flagAnimation}
-        </div>
+        <div className="flex items-center">{flagAnimation}</div>
       </header>
 
       {/* Main Chat Area */}
       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
         {messages.map((message, index) => (
-          <div 
-            key={index} 
-            className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div 
+          <div key={index} className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div
               className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                message.sender === 'user' 
-                  ? 'bg-blue-600 text-white' 
-                  : 'bg-gray-800 border border-gray-700'
+                message.sender === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-800 border border-gray-700'
               }`}
             >
               <div className="flex flex-col">
                 <div className="mb-1">{message.content}</div>
-                <div className={`text-xs ${message.sender === 'user' ? 'text-blue-200' : 'text-gray-400'} text-right`}>
+                <div
+                  className={`text-xs ${
+                    message.sender === 'user' ? 'text-blue-200' : 'text-gray-400'
+                  } text-right`}
+                >
                   {formatTime(message.timestamp)}
                 </div>
               </div>
